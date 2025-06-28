@@ -1,4 +1,4 @@
-CREATE TYPE jenjang_enum AS ENUM ('Sarjana (S1)', 'Magister (S2)');
+CREATE TYPE  jenjang_enum AS ENUM ('Sarjana (S1)', 'Magister (S2)');
 
 CREATE TABLE program_studi (
     id_prodi UUID NOT NULL DEFAULT uuid_generate_v4(),

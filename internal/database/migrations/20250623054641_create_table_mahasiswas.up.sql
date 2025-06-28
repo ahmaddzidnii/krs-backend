@@ -35,14 +35,14 @@ $$ LANGUAGE plpgsql;
 
 CREATE TABLE mahasiswas (
     id_mahasiswa UUID NOT NULL DEFAULT uuid_generate_v4(),
+    id_user UUID NOT NULL UNIQUE,
     id_prodi UUID NOT NULL,
     id_dpa UUID NOT NULL,
+    id_kurikulum UUID NOT NULL,
     nim VARCHAR(20) NOT NULL UNIQUE,
     nama VARCHAR(100) NOT NULL,
-    password VARCHAR(100) NOT NULL,
     ipk NUMERIC(3, 2) NOT NULL DEFAULT 0.00,
     ips_lalu NUMERIC(3, 2) NOT NULL DEFAULT 0.00,
-    tahun_akademik VARCHAR(10) NOT NULL,
     semester_berjalan INT NOT NULL DEFAULT 1,
     sks_kumulatif INT NOT NULL DEFAULT 0,
     jatah_sks INT NOT NULL DEFAULT 0,
