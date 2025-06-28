@@ -48,6 +48,7 @@ CREATE TABLE krs (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
+    UNIQUE (id_mahasiswa, id_periode),
     PRIMARY KEY (id_krs)
 );
 

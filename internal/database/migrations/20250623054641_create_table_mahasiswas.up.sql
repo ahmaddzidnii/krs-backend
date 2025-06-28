@@ -33,7 +33,7 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TABLE mahasiswas (
+CREATE TABLE mahasiswa (
     id_mahasiswa UUID NOT NULL DEFAULT uuid_generate_v4(),
     id_user UUID NOT NULL UNIQUE,
     id_prodi UUID NOT NULL,
@@ -55,11 +55,11 @@ CREATE TABLE mahasiswas (
 );
 
 CREATE TRIGGER set_updated_at
-    BEFORE UPDATE ON mahasiswas
+    BEFORE UPDATE ON mahasiswa
     FOR EACH ROW
     EXECUTE PROCEDURE trigger_set_updated_at();
 
 CREATE TRIGGER trigger_hitung_jatah_sks
-    BEFORE INSERT OR UPDATE ON mahasiswas
+    BEFORE INSERT OR UPDATE ON mahasiswa
     FOR EACH ROW
     EXECUTE PROCEDURE hitung_jatah_sks_trigger_func();

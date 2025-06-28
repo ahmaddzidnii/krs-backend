@@ -1,11 +1,11 @@
 -- STEP 1: Hapus trigger dari tabel 'mahasiswas'.
 -- Trigger bergantung pada tabel dan fungsi, jadi ini harus dihapus terlebih dahulu.
-DROP TRIGGER IF EXISTS set_updated_at ON mahasiswas;
-DROP TRIGGER  IF EXISTS hitung_jatah_sks ON mahasiswas;
+DROP TRIGGER IF EXISTS set_updated_at ON mahasiswa;
+DROP TRIGGER  IF EXISTS hitung_jatah_sks ON mahasiswa;
 
 -- STEP 2: Hapus tabel 'mahasiswas'.
 -- Tabel harus dihapus sebelum tipe data (ENUM) dan fungsi yang mungkin bergantung padanya.
-DROP TABLE IF EXISTS mahasiswas;
+DROP TABLE IF EXISTS mahasiswa;
 
 -- -- STEP 3: Hapus fungsi yang digunakan oleh trigger.
 -- -- Fungsi ini sudah tidak lagi digunakan setelah trigger dan tabelnya dihapus.
