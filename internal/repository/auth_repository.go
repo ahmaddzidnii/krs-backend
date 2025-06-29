@@ -9,7 +9,7 @@ import (
 
 // AuthRepository interface
 type AuthRepository interface {
-	FindByNIM(nim string) (*models.Mahasiswa, error)
+	FindByCredential(credential string) (*models.User, error)
 }
 
 type AuthRepositoryImpl struct {
@@ -25,12 +25,12 @@ func NewAuthRepository(db *gorm.DB, logger *logrus.Logger) AuthRepository {
 	}
 }
 
-func (r *AuthRepositoryImpl) FindByNIM(nim string) (*models.Mahasiswa, error) {
-	log := r.Logger.WithField("nim", nim)
-	log.Info("Mencari mahasiswa berdasarkan NIM di database")
-	var mhs models.Mahasiswa
+func (r *AuthRepositoryImpl) FindByCredential(credential string) (*models.User, error) {
+	log := r.Logger.WithField("credential", credential)
+	log.Info("Mencari user berdasarkan kredential yang diberikan")
+	var user models.User
 	startTime := time.Now()
-	err := r.Db.Where("nim = ?", nim).First(&mhs).Error
+	err := r.Db.Preload("Role").Where("username = ?", credential).First(&user).Error
 	duration := time.Since(startTime)
 
 	if duration > 5*time.Second {
@@ -42,5 +42,5 @@ func (r *AuthRepositoryImpl) FindByNIM(nim string) (*models.Mahasiswa, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &mhs, nil
+	return &user, nil
 }

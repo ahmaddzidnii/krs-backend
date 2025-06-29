@@ -30,7 +30,10 @@ func InitializeApp() (Application, error) {
 	authRepository := repository.NewAuthRepository(db, logger)
 	client := ProvideRedis(logger)
 	sessionRepository := repository.NewSessionRepository(client, logger)
-	authService := service.NewAuthService(authRepository, sessionRepository, logger)
+	mahasiswaRepository := repository.NewMahasiswaRepository(db)
+	dosenRepository := repository.NewDosenRepository(db)
+	pegawaiRepository := repository.NewPegawaiRepository(db)
+	authService := service.NewAuthService(authRepository, sessionRepository, logger, mahasiswaRepository, dosenRepository, pegawaiRepository)
 	validate := ProvideValidator()
 	authHandler := handlers.NewAuthHandler(authService, logger, validate)
 	middleware := middlewares.NewMiddleware(client)
@@ -70,7 +73,6 @@ func ProvideLogger() *logrus.Logger {
 	return config.InitLogger()
 }
 
-// ProvideRouter: Tambahkan kembali DB *gorm.DB sebagai parameter
 func ProvideRouter(authHandler *handlers.AuthHandler, middleware *middlewares.Middleware, DB *gorm.DB) *fiber.App {
 	app := fiber.New()
 	routes.RegisterRoutes(app, authHandler, middleware, DB)
@@ -84,14 +86,13 @@ func NewApplication(app *fiber.App, logger *logrus.Logger) Application {
 	}
 }
 
-var RepositorySet = wire.NewSet(repository.NewAuthRepository, repository.NewSessionRepository)
+var RepositorySet = wire.NewSet(repository.NewAuthRepository, repository.NewSessionRepository, repository.NewMahasiswaRepository, repository.NewDosenRepository, repository.NewPegawaiRepository)
 
 var ServiceSet = wire.NewSet(service.NewAuthService)
 
 var HandlerSet = wire.NewSet(handlers.NewAuthHandler, middlewares.NewMiddleware)
 
 var AppSet = wire.NewSet(
-
 	ProvideDatabase,
 	ProvideRedis,
 	ProvideValidator,

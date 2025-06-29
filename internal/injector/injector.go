@@ -65,6 +65,9 @@ var RepositorySet = wire.NewSet(
 	//Mengembaikan constructor untuk setiap repository.
 	repository.NewAuthRepository,
 	repository.NewSessionRepository,
+	repository.NewMahasiswaRepository,
+	repository.NewDosenRepository,
+	repository.NewPegawaiRepository,
 )
 
 var ServiceSet = wire.NewSet(

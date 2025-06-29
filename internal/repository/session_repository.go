@@ -34,7 +34,7 @@ func (r *SessionRepositoryImpl) Create(ctx context.Context, sessionID string, pa
 	log := r.Logger.WithFields(logrus.Fields{
 		"sessionID": sessionID,
 		"userID":    payload.UserId,
-		"nim":       payload.Nim,
+		"nim":       payload.NomorInduk,
 	})
 
 	log.Info("Menyimpan sesi ke Redis")

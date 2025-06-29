@@ -3,7 +3,6 @@ package routes
 import (
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/handlers"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/middlewares"
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"gorm.io/gorm"
@@ -24,7 +23,7 @@ func RegisterRoutes(app *fiber.App, authHandler *handlers.AuthHandler, mid *midd
 		AllowCredentials: true,
 	}))
 
-	middlewares.InitTimezoneWib()
+	//middlewares.InitTimezoneWib()
 
 	app.Use(
 		helmet.New(),
@@ -43,7 +42,7 @@ func RegisterRoutes(app *fiber.App, authHandler *handlers.AuthHandler, mid *midd
 	}))
 
 	api := app.Group("/api/v1")
-	api.Use(middlewares.KRSScheduleMiddleware)
+	//api.Use(middlewares.KRSScheduleMiddleware)
 
 	authRoute := api.Group("/auth")
 	authRoute.Post("/login", authHandler.Login)
@@ -63,35 +62,35 @@ func RegisterRoutes(app *fiber.App, authHandler *handlers.AuthHandler, mid *midd
 		CreatedAt        int64   `json:"created_at"`
 		UpdatedAt        int64   `json:"updated_at"`
 	}
-	api.Get("/mhs", func(c *fiber.Ctx) error {
-		var mhs []models.Mahasiswa
-
-		if err := DB.Find(&mhs).Error; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  "error",
-				"message": "Gagal mengambil data mahasiswa",
-			})
-		}
-
-		mhsResponses := make([]MhsResponse, 0, len(mhs))
-
-		for _, m := range mhs {
-			response := MhsResponse{
-				IDMahasiswa:      m.IdMahasiswa.String(),
-				NIM:              m.NIM,
-				Nama:             m.Nama,
-				IPK:              m.IPK,
-				IPSLalu:          m.IPSLalu,
-				TahunAkademik:    m.TahunAkademik,
-				SemesterBerjalan: m.SemesterBerjalan,
-				StatusMahasiswa:  m.StatusMahasiswa,
-				StatusPembayaran: m.StatusPembayaran,
-				CreatedAt:        m.CreatedAt.Unix(),
-				UpdatedAt:        m.UpdatedAt.Unix(),
-			}
-			mhsResponses = append(mhsResponses, response)
-		}
-
-		return c.JSON(mhsResponses)
-	})
+	//api.Get("/mhs", func(c *fiber.Ctx) error {
+	//	var mhs []models.Mahasiswa
+	//
+	//	if err := DB.Find(&mhs).Error; err != nil {
+	//		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	//			"status":  "error",
+	//			"message": "Gagal mengambil data mahasiswa",
+	//		})
+	//	}
+	//
+	//	mhsResponses := make([]MhsResponse, 0, len(mhs))
+	//
+	//	for _, m := range mhs {
+	//		response := MhsResponse{
+	//			IDMahasiswa:      m.IdMahasiswa.String(),
+	//			NIM:              m.NIM,
+	//			Nama:             m.Nama,
+	//			IPK:              m.IPK,
+	//			IPSLalu:          m.IPSLalu,
+	//			TahunAkademik:    m.TahunAkademik,
+	//			SemesterBerjalan: m.SemesterBerjalan,
+	//			StatusMahasiswa:  m.StatusMahasiswa,
+	//			StatusPembayaran: m.StatusPembayaran,
+	//			CreatedAt:        m.CreatedAt.Unix(),
+	//			UpdatedAt:        m.UpdatedAt.Unix(),
+	//		}
+	//		mhsResponses = append(mhsResponses, response)
+	//	}
+	//
+	//	return c.JSON(mhsResponses)
+	//})
 }
