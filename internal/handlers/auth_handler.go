@@ -31,15 +31,15 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	var req service.LoginRequest
 
 	if err := c.BodyParser(&req); err != nil {
-		h.Logger.WithError(err).Error("Gagal mem-parsing body request login")
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
+		h.Logger.WithError(err).Error("Gagal mem-parsing body requests login")
+		return utils.Error(c, fiber.StatusBadRequest, "Invalid requests body")
 	}
 
 	if err := h.Validator.Struct(req); err != nil {
 		var validationErrors validator.ValidationErrors
 		if errors.As(err, &validationErrors) {
 			errorBag := utils.GenerateValidationResponse(validationErrors)
-			return utils.Error(c, fiber.StatusBadRequest, errorBag)
+			return utils.ValidationErrorResponse(c, errorBag)
 		}
 	}
 
@@ -48,7 +48,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	if err != nil {
 		h.Logger.WithError(err).Error("Gagal melakukan login")
 		if errors.Is(err, service.ErrInvalidCredentials) {
-			return utils.Error(c, fiber.StatusUnauthorized, "NIM atau password salah")
+			return utils.Error(c, fiber.StatusUnauthorized, "Invalid username or password")
 		} else if errors.Is(err, service.ErrInternalServer) {
 			return utils.Error(c, fiber.StatusInternalServerError, "Internal server error")
 		}
@@ -63,7 +63,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 
 	c.Cookie(cookie)
 
-	return utils.Success(c, fiber.StatusOK, fiber.Map{
+	return utils.Success(c, fiber.StatusOK, "Login success", fiber.Map{
 		"session_id": sessionId,
 	})
 }
@@ -92,9 +92,7 @@ func (h *AuthHandler) Logout(c *fiber.Ctx) error {
 
 	utils.ClearCookies(c, "session_id")
 
-	return utils.Success(c, fiber.StatusOK, fiber.Map{
-		"message": "Logout successful",
-	})
+	return utils.Success(c, fiber.StatusOK, "Logout success", nil)
 }
 
 func (h *AuthHandler) GetSession(c *fiber.Ctx) error {
@@ -104,5 +102,5 @@ func (h *AuthHandler) GetSession(c *fiber.Ctx) error {
 		return utils.Error(c, fiber.StatusInternalServerError, "Internal server error")
 	}
 
-	return utils.Success(c, fiber.StatusOK, sessionData)
+	return utils.Success(c, fiber.StatusOK, "Successfully retrieve session data", sessionData)
 }

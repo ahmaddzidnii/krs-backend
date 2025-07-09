@@ -4,19 +4,23 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/service"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 	"log"
 	"strings"
 )
 
 type Middleware struct {
-	Redis *redis.Client
+	Redis     *redis.Client
+	Db        *gorm.DB
+	TaService service.TahunAkademikService
 }
 
-func NewMiddleware(redis *redis.Client) *Middleware {
-	return &Middleware{Redis: redis}
+func NewMiddleware(redis *redis.Client, db *gorm.DB, taService service.TahunAkademikService) *Middleware {
+	return &Middleware{Redis: redis, Db: db, TaService: taService}
 }
 
 func (m *Middleware) AuthMiddleware() fiber.Handler {

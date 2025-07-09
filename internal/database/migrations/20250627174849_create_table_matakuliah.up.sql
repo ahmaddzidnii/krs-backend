@@ -1,8 +1,8 @@
 CREATE TABLE mata_kuliah (
     id_matkul UUID DEFAULT gen_random_uuid(),
-    kode_matkul VARCHAR(10) NOT NULL UNIQUE,
-    nama VARCHAR(100) NOT NULL,
-    sks INT NOT NULL CHECK (sks > 0),
+    kode_matkul VARCHAR(256) NOT NULL UNIQUE,
+    nama VARCHAR(256) NOT NULL,
+    sks INT NOT NULL ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 

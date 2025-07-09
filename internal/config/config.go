@@ -8,12 +8,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func LoadConfig() {
+func LoadEnv() error {
 	err := godotenv.Load()
 	if err != nil {
 		log.Println(err)
 		log.Println("Peringatan: Tidak dapat menemukan file .env, menggunakan variabel lingkungan sistem.")
+		return err
 	}
+
+	return nil
 }
 
 func GetEnv(key, fallback string) string {

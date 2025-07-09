@@ -13,7 +13,8 @@ type Dosen struct {
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime" json:"updated_at"`
 
-	User User `gorm:"foreignKey:id_user;references:id_user" json:"user,omitempty"`
+	User        User              `gorm:"foreignKey:id_user;references:id_user" json:"user,omitempty"`
+	KelasDiampu []KelasDitawarkan `gorm:"many2many:dosen_pengajar_kelas;foreignKey:id_dosen;joinForeignKey:id_dosen;References:id_kelas;joinReferences:id_kelas"`
 }
 
 func (m *Dosen) TableName() string {

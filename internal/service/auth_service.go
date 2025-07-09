@@ -61,7 +61,6 @@ func (s *AuthServiceImpl) Login(ctx context.Context, req LoginRequest) (string, 
 	log := s.Logger.WithField("nim", req.Username)
 	log.Info("Memproses permintaan login")
 
-	// 2. Cari user via repository
 	user, err := s.AuthRepository.FindByCredential(req.Username)
 	if err != nil {
 		// Jika user tidak ditemukan, kembalikan error umum

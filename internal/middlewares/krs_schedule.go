@@ -1,11 +1,14 @@
 package middlewares
 
 import (
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/config"
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/utils"
+	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
+
+	"gorm.io/gorm"
 	"log"
 	"net/http"
+
 	"time"
 )
 
@@ -20,34 +23,62 @@ func InitTimezoneWib() {
 	log.Println("Zona waktu 'Asia/Jakarta' berhasil dimuat.")
 }
 
-func KRSScheduleMiddleware(c *fiber.Ctx) error {
-	tanggalMulaiStr := config.GetEnv("KRS_START_DATE", "2025-06-26")
-	tanggalSelesaiStr := config.GetEnv("KRS_END_DATE", "2025-06-28")
-	jamBuka := config.GetEnvAsInt("KRS_OPEN_HOUR", 8)
-	jamTutup := config.GetEnvAsInt("KRS_CLOSE_HOUR", 15)
+func (m *Middleware) KRSScheduleMiddleware() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		periodeTahunAkademik, err := m.TaService.GetActiveTahunAkademik()
 
-	tanggalMulai, err1 := time.ParseInLocation("2006-01-02", tanggalMulaiStr, wibLocation)
-	tanggalSelesai, err2 := time.ParseInLocation("2006-01-02", tanggalSelesaiStr, wibLocation)
-	if err1 != nil || err2 != nil {
-		log.Printf("ERROR: Format tanggal di ENV tidak valid")
-		return utils.Error(c, http.StatusInternalServerError, "Konfigurasi server tidak valid")
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				log.Println("Peringatan: Akses KRS ditolak, tidak ada periode akademik yang aktif.")
+				return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+					"status":     fiber.StatusForbidden,
+					"error_code": "KRS_PERIOD_NOT_ACTIVE",
+					"errors":     "Saat ini tidak ada periode pengisian KRS yang aktif.",
+				})
+			}
+
+			log.Printf("ERROR: Gagal mengambil jadwal KRS dari database: %v", err)
+			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"status": http.StatusInternalServerError,
+				"errors": "Gagal memproses permintaan Anda karena kesalahan server.",
+			})
+		}
+
+		now := time.Now().In(wibLocation)
+
+		jamBuka, err1 := time.Parse("15:04:05", periodeTahunAkademik.JamMulaiHarianKRS)
+		jamTutup, err2 := time.Parse("15:04:05", periodeTahunAkademik.JamSelesaiHarianKRS)
+
+		if err1 != nil || err2 != nil {
+			log.Printf("ERROR: Format jam di database tidak valid. Jam Buka: %s, Jam Tutup: %s", periodeTahunAkademik.JamMulaiHarianKRS, periodeTahunAkademik.JamSelesaiHarianKRS)
+			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"status": http.StatusInternalServerError,
+				"errors": "Konfigurasi jam KRS di server tidak valid.",
+			})
+		}
+
+		waktuBuka := time.Date(now.Year(), now.Month(), now.Day(), jamBuka.Hour(), jamBuka.Minute(), 0, 0, wibLocation)
+		waktuTutup := time.Date(now.Year(), now.Month(), now.Day(), jamTutup.Hour(), jamTutup.Minute(), 0, 0, wibLocation)
+
+		tanggalSelesaiKRS := periodeTahunAkademik.TanggalSelesaiKRS.Add(24*time.Hour - 1*time.Second)
+
+		isDiluarJadwal := now.Before(periodeTahunAkademik.TanggalMulaiKRS) || now.After(tanggalSelesaiKRS) || now.Before(waktuBuka) || now.After(waktuTutup)
+
+		if isDiluarJadwal {
+			errorMessage := fmt.Sprintf(
+				"Pendaftaran KRS hanya bisa dilakukan dari %s hingga %s, setiap hari pukul %s - %s WIB.",
+				periodeTahunAkademik.TanggalMulaiKRS.Format("2 January 2006"),
+				periodeTahunAkademik.TanggalSelesaiKRS.Format("2 January 2006"),
+				waktuBuka.Format("15:04"),
+				waktuTutup.Format("15:04"),
+			)
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"status":     fiber.StatusForbidden,
+				"error_code": "KRS_SCHEDULE_NOT_ALLOWED",
+				"errors":     errorMessage,
+			})
+		}
+
+		return c.Next()
 	}
-
-	now := time.Now().In(wibLocation)
-
-	waktuBuka := time.Date(now.Year(), now.Month(), now.Day(), jamBuka, 0, 0, 0, wibLocation)
-	waktuTutup := time.Date(now.Year(), now.Month(), now.Day(), jamTutup, 0, 0, 0, wibLocation)
-
-	isDiluarJadwal := now.Before(tanggalMulai) || now.After(tanggalSelesai.Add(23*time.Hour+59*time.Minute+59*time.Second)) || now.Before(waktuBuka) || now.After(waktuTutup)
-
-	if isDiluarJadwal {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"status":     fiber.StatusForbidden,
-			"error_code": "KRS_SCHEDULE_NOT_ALLOWED",
-			"errors":     "Pendaftaran KRS hanya dapat dilakukan sesuai jadwal yang telah ditentukan.",
-		})
-	}
-
-	//log.Printf("Akses diizinkan pada %s", now.Format(time.RFC1123))
-	return c.Next()
 }

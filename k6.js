@@ -10,9 +10,9 @@ export const options = {
         { duration: '30s', target: 0 },    // Turun kembali ke 0 pengguna selama 30 detik
     ],
     thresholds: {
-        // 95% dari semua request harus selesai di bawah 800ms
+        // 95% dari semua requests harus selesai di bawah 800ms
         http_req_duration: ['p(95)<800'],
-        // Kurang dari 1% dari request yang boleh gagal
+        // Kurang dari 1% dari requests yang boleh gagal
         http_req_failed: ['rate<0.01'],
         // Tentukan kriteria keberhasilan untuk setiap proses
         'login_duration': ['p(95)<800'],
@@ -45,7 +45,7 @@ export default function () {
     // Variabel untuk menyimpan session ID
     let sessionId = '';
 
-    // Gunakan group() untuk mengelompokkan request dalam laporan hasil.
+    // Gunakan group() untuk mengelompokkan requests dalam laporan hasil.
     group('1. Proses Login', function () {
         const loginPayload = JSON.stringify({
             username: user.nim, // Payload disesuaikan dengan flow Anda
@@ -65,7 +65,7 @@ export default function () {
             'Respons berisi session_id': (r) => r.json('data.session_id') !== undefined && r.json('data.session_id') !== null,
         });
 
-        // Jika login berhasil, simpan session ID untuk request selanjutnya.
+        // Jika login berhasil, simpan session ID untuk requests selanjutnya.
         if (loginSuccess) {
             sessionId = res.json('data.session_id');
         }
@@ -85,7 +85,7 @@ export default function () {
         };
 
         group('2. Cek Sesi Pengguna', function () {
-            // Kirim request GET ke endpoint session
+            // Kirim requests GET ke endpoint session
             const res = http.get(`${BASE_URL}/api/v1/auth/session`, authHeaders);
             sessionCheckDuration.add(res.timings.duration);
 

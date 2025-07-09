@@ -28,13 +28,16 @@ func (j JenisMataKuliah) Value() (driver.Value, error) {
 }
 
 type DetailKurikulum struct {
-	IDDetailKurikulum uuid.UUID       `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id_detail_kurikulum"`
-	IDKurikulum       uuid.UUID       `gorm:"type:uuid;not null" json:"id_kurikulum"`
-	IDMatkul          uuid.UUID       `gorm:"type:uuid;not null" json:"id_matkul"`
-	JenisMatkul       JenisMataKuliah `gorm:"type:jenis_mata_kuliah;not null" json:"jenis_matkul"`
-	SemesterPaket     int             `gorm:"not null" json:"semester_paket"`
+	IDDetailKurikulum uuid.UUID       `gorm:"primaryKey;column:id_detail_kurikulum" json:"id_detail_kurikulum"`
+	IDKurikulum       uuid.UUID       `gorm:"column:id_kurikulum" json:"id_kurikulum"`
+	IDMatkul          uuid.UUID       `gorm:"column:id_matkul" json:"id_matkul"`
+	JenisMatkul       JenisMataKuliah `gorm:"column:jenis_matkul" json:"jenis_matkul"`
+	SemesterPaket     int             `gorm:"column:semester_paket" json:"semester_paket"`
 	CreatedAt         time.Time       `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt         time.Time       `gorm:"column:updated_at;autoCreateTime;autoUpdateTime" json:"updated_at"`
+
+	Kurikulum Kurikulum  `gorm:"foreignKey:id_kurikulum;references:id_kurikulum" json:"kurikulum,omitempty"`
+	Matkul    MataKuliah `gorm:"foreignKey:id_matkul;references:id_matkul" json:"matkul,omitempty"`
 }
 
 func (m *DetailKurikulum) TableName() string {

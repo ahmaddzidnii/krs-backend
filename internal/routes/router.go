@@ -5,7 +5,6 @@ import (
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/middlewares"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
-	"gorm.io/gorm"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,8 +12,12 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
-func RegisterRoutes(app *fiber.App, authHandler *handlers.AuthHandler, mid *middlewares.Middleware, DB *gorm.DB) {
+func RegisterRoutes(app *fiber.App, h *handlers.Handlers, mid *middlewares.Middleware) {
 	app.Use(logger.New())
+
+	app.Use(
+		helmet.New(),
+	)
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:3000,http://localhost:4173,https://krs-dev.masako.my.id",
@@ -23,11 +26,7 @@ func RegisterRoutes(app *fiber.App, authHandler *handlers.AuthHandler, mid *midd
 		AllowCredentials: true,
 	}))
 
-	//middlewares.InitTimezoneWib()
-
-	app.Use(
-		helmet.New(),
-	)
+	middlewares.InitTimezoneWib()
 
 	app.Use(limiter.New(limiter.Config{
 		Max:               50,
@@ -42,55 +41,14 @@ func RegisterRoutes(app *fiber.App, authHandler *handlers.AuthHandler, mid *midd
 	}))
 
 	api := app.Group("/api/v1")
-	//api.Use(middlewares.KRSScheduleMiddleware)
+	api.Use(mid.KRSScheduleMiddleware())
 
 	authRoute := api.Group("/auth")
-	authRoute.Post("/login", authHandler.Login)
-	authRoute.Post("/logout", mid.AuthMiddleware(), authHandler.Logout)
-	authRoute.Get("/session", mid.AuthMiddleware(), authHandler.GetSession)
+	authRoute.Post("/login", h.AuthHandler.Login)
+	authRoute.Post("/logout", mid.AuthMiddleware(), h.AuthHandler.Logout)
+	authRoute.Get("/session", mid.AuthMiddleware(), h.AuthHandler.GetSession)
 
-	type MhsResponse struct {
-		IDMahasiswa      string  `json:"id_mahasiswa"`
-		NIM              string  `json:"nim"`
-		Nama             string  `json:"nama"`
-		IPK              float64 `json:"ipk"`
-		IPSLalu          float64 `json:"ips_lalu"`
-		TahunAkademik    string  `json:"tahun_akademik"`
-		SemesterBerjalan int     `json:"semester_berjalan"`
-		StatusMahasiswa  string  `json:"status_mahasiswa"`
-		StatusPembayaran string  `json:"status_pembayaran"`
-		CreatedAt        int64   `json:"created_at"`
-		UpdatedAt        int64   `json:"updated_at"`
-	}
-	//api.Get("/mhs", func(c *fiber.Ctx) error {
-	//	var mhs []models.Mahasiswa
-	//
-	//	if err := DB.Find(&mhs).Error; err != nil {
-	//		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	//			"status":  "error",
-	//			"message": "Gagal mengambil data mahasiswa",
-	//		})
-	//	}
-	//
-	//	mhsResponses := make([]MhsResponse, 0, len(mhs))
-	//
-	//	for _, m := range mhs {
-	//		response := MhsResponse{
-	//			IDMahasiswa:      m.IdMahasiswa.String(),
-	//			NIM:              m.NIM,
-	//			Nama:             m.Nama,
-	//			IPK:              m.IPK,
-	//			IPSLalu:          m.IPSLalu,
-	//			TahunAkademik:    m.TahunAkademik,
-	//			SemesterBerjalan: m.SemesterBerjalan,
-	//			StatusMahasiswa:  m.StatusMahasiswa,
-	//			StatusPembayaran: m.StatusPembayaran,
-	//			CreatedAt:        m.CreatedAt.Unix(),
-	//			UpdatedAt:        m.UpdatedAt.Unix(),
-	//		}
-	//		mhsResponses = append(mhsResponses, response)
-	//	}
-	//
-	//	return c.JSON(mhsResponses)
-	//})
+	mahasiswaRoute := api.Group("/mahasiswa")
+	mahasiswaRoute.Get("/syarat-pengisian-krs", mid.AuthMiddleware(), h.MahasiswaHandler.GetSyaratPengisisanKRS)
+	mahasiswaRoute.Get("/informasi-umum", mid.AuthMiddleware(), h.MahasiswaHandler.GetInformasiUmum)
 }

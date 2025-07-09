@@ -6,12 +6,14 @@ import (
 )
 
 type MataKuliah struct {
-	IDMatkul   uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id_matkul"`
-	KodeMatkul string    `gorm:"type:varchar(10);unique;not null" json:"kode_matkul"`
-	Nama       string    `gorm:"type:varchar(100);not null" json:"nama"`
-	SKS        int       `gorm:"not null;check:sks > 0" json:"sks"`
+	IDMatkul   uuid.UUID `gorm:"primaryKey;column:id_matkul" json:"id_matkul"`
+	KodeMatkul string    `gorm:"column:kode_matkul;unique;not null" json:"kode_matkul"`
+	Nama       string    `gorm:"column:nama;not null" json:"nama"`
+	SKS        int       `gorm:"column:sks;not null" json:"sks"`
 	CreatedAt  time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime" json:"updated_at"`
+
+	DetailKurikulum []DetailKurikulum `gorm:"foreignKey:id_matkul;references:id_matkul" json:"detail_kurikulum,omitempty"`
 }
 
 func (m *MataKuliah) TableName() string {

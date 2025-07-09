@@ -2,13 +2,19 @@ package main
 
 import (
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/config"
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/injector"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	config.LoadConfig()
-	app, err := injector.InitializeApp()
+	err := config.LoadEnv()
+
+	if err != nil {
+		logrus.Warn("Tidak dapat memuat file .env, menggunakan variabel lingkungan sistem.")
+	} else {
+		logrus.Info("File .env berhasil dimuat.")
+	}
+
+	app, err := InitializeApp()
 	if err != nil {
 		logrus.Fatal("Gagal menginisialisasi aplikasi: %v", err)
 	}
