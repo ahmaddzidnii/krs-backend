@@ -1,0 +1,202 @@
+{
+  "status": 200,
+  "validation_errors": null,
+  "message": "Berhasil mendapatkan jadwal kelas",
+  "data": [
+    {
+      "id_kelas": "4f006499-a5f2-4361-ab99-e1367fe116c1",
+      "id_periode": "9a4d4f15-4571-4652-8b29-80fd121a7293",
+      "id_matkul": "427ac48a-9663-4217-ac00-9983c2619594",
+      "kouta": 46,
+      "created_at": "2025-07-08T03:39:42.7482Z",
+      "updated_at": "2025-07-12T12:44:23.341551Z",
+      "periode_akademik": {
+        "id_periode": "00000000-0000-0000-0000-000000000000",
+        "tahun_akademik": "",
+        "jenis_semester": "",
+        "tanggal_mulai_krs": "0001-01-01T00:00:00Z",
+        "tanggal_selesai_krs": "0001-01-01T00:00:00Z",
+        "jam_mulai_harian_krs": "",
+        "jam_selesai_harian_krs": "",
+        "is_active": false,
+        "created_at": "0001-01-01T00:00:00Z",
+        "updated_at": "0001-01-01T00:00:00Z"
+      },
+      "mata_kuliah": {
+        "id_matkul": "427ac48a-9663-4217-ac00-9983c2619594",
+        "kode_matkul": "TIF414020",
+        "nama": "Basis Data",
+        "sks": 4,
+        "created_at": "2025-07-01T07:34:21.968Z",
+        "updated_at": "2025-07-01T07:34:21.968Z",
+        "detail_kurikulum": [
+          {
+            "id_detail_kurikulum": "50046d1e-7fba-447b-a69e-df353b8e73d3",
+            "id_kurikulum": "cc4041be-bd4f-498a-a4f5-c8ce1d6786cc",
+            "id_matkul": "427ac48a-9663-4217-ac00-9983c2619594",
+            "jenis_matkul": "Wajib",
+            "semester_paket": 4,
+            "created_at": "2025-07-05T16:49:08.749Z",
+            "updated_at": "2025-07-05T16:49:08.749Z",
+            "kurikulum": {
+              "id_kurikulum": "cc4041be-bd4f-498a-a4f5-c8ce1d6786cc",
+              "id_prodi": "6484c3fa-d191-48c9-9493-421bfad1f286",
+              "kode_kurikulum": "S1TIF20",
+              "nama": "S1 T. INFORMATIKA 2020",
+              "is_active": false,
+              "created_at": "2025-07-01T06:46:12.019Z",
+              "updated_at": "2025-07-01T06:46:12.019Z",
+              "program_studi": {
+                "id_prodi": "00000000-0000-0000-0000-000000000000",
+                "id_fakultas": "00000000-0000-0000-0000-000000000000",
+                "kode_prodi": "",
+                "nama": "",
+                "jenjang": "",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "fakultas": {
+                  "id_fakultas": "00000000-0000-0000-0000-000000000000",
+                  "kode_fakultas": "",
+                  "nama": "",
+                  "singkatan": "",
+                  "created_at": "0001-01-01T00:00:00Z",
+                  "updated_at": "0001-01-01T00:00:00Z",
+                  "ProgramStudi": null
+                }
+              }
+            },
+            "matkul": {
+              "id_matkul": "00000000-0000-0000-0000-000000000000",
+              "kode_matkul": "",
+              "nama": "",
+              "sks": 0,
+              "created_at": "0001-01-01T00:00:00Z",
+              "updated_at": "0001-01-01T00:00:00Z"
+            }
+          }
+        ]
+      },
+      "jadwal_kelas": [
+        {
+          "id_jadwal": "7f2638f9-43ed-459c-b38c-2d6affdde48b",
+          "id_kelas": "4f006499-a5f2-4361-ab99-e1367fe116c1",
+          "hari": "Senin",
+          "waktu_mulai": {
+            "Time": "0000-01-01T12:00:00Z",
+            "Valid": true
+          },
+          "waktu_selesai": {
+            "Time": "0000-01-01T14:00:00Z",
+            "Valid": true
+          },
+          "ruang": "FST-407",
+          "created_at": "2025-07-08T04:33:09.246197Z",
+          "updated_at": "2025-07-08T04:33:09.246197Z",
+          "Kelas": {
+            "id_kelas": "00000000-0000-0000-0000-000000000000",
+            "id_periode": "00000000-0000-0000-0000-000000000000",
+            "id_matkul": "00000000-0000-0000-0000-000000000000",
+            "kouta": 0,
+            "created_at": "0001-01-01T00:00:00Z",
+            "updated_at": "0001-01-01T00:00:00Z",
+            "periode_akademik": {
+              "id_periode": "00000000-0000-0000-0000-000000000000",
+              "tahun_akademik": "",
+              "jenis_semester": "",
+              "tanggal_mulai_krs": "0001-01-01T00:00:00Z",
+              "tanggal_selesai_krs": "0001-01-01T00:00:00Z",
+              "jam_mulai_harian_krs": "",
+              "jam_selesai_harian_krs": "",
+              "is_active": false,
+              "created_at": "0001-01-01T00:00:00Z",
+              "updated_at": "0001-01-01T00:00:00Z"
+            },
+            "mata_kuliah": {
+              "id_matkul": "00000000-0000-0000-0000-000000000000",
+              "kode_matkul": "",
+              "nama": "",
+              "sks": 0,
+              "created_at": "0001-01-01T00:00:00Z",
+              "updated_at": "0001-01-01T00:00:00Z"
+            },
+            "DosenPengajar": null,
+            "KRS": null
+          }
+        },
+        {
+          "id_jadwal": "df44756f-9c53-461d-aeff-89c7450c6549",
+          "id_kelas": "4f006499-a5f2-4361-ab99-e1367fe116c1",
+          "hari": "Selasa",
+          "waktu_mulai": {
+            "Time": "0000-01-01T19:16:00Z",
+            "Valid": true
+          },
+          "waktu_selesai": {
+            "Time": "0000-01-01T20:16:16Z",
+            "Valid": true
+          },
+          "ruang": "FST-405",
+          "created_at": "2025-07-12T12:16:32.676917Z",
+          "updated_at": "2025-07-12T12:16:44.421564Z",
+          "Kelas": {
+            "id_kelas": "00000000-0000-0000-0000-000000000000",
+            "id_periode": "00000000-0000-0000-0000-000000000000",
+            "id_matkul": "00000000-0000-0000-0000-000000000000",
+            "kouta": 0,
+            "created_at": "0001-01-01T00:00:00Z",
+            "updated_at": "0001-01-01T00:00:00Z",
+            "periode_akademik": {
+              "id_periode": "00000000-0000-0000-0000-000000000000",
+              "tahun_akademik": "",
+              "jenis_semester": "",
+              "tanggal_mulai_krs": "0001-01-01T00:00:00Z",
+              "tanggal_selesai_krs": "0001-01-01T00:00:00Z",
+              "jam_mulai_harian_krs": "",
+              "jam_selesai_harian_krs": "",
+              "is_active": false,
+              "created_at": "0001-01-01T00:00:00Z",
+              "updated_at": "0001-01-01T00:00:00Z"
+            },
+            "mata_kuliah": {
+              "id_matkul": "00000000-0000-0000-0000-000000000000",
+              "kode_matkul": "",
+              "nama": "",
+              "sks": 0,
+              "created_at": "0001-01-01T00:00:00Z",
+              "updated_at": "0001-01-01T00:00:00Z"
+            },
+            "DosenPengajar": null,
+            "KRS": null
+          }
+        }
+      ],
+      "DosenPengajar": [
+        {
+          "id_dosen": "1a1531ba-8a51-4acc-bb9b-c4c3e77c1399",
+          "nip": "197510242009121002",
+          "id_user": "d5d048e4-39e6-423b-948a-a8ea7c997d06",
+          "nama": "DR. IR. BAMBANG SUGIANTORO, M.T., IPU., ASEAN ENG.",
+          "created_at": "2025-06-29T14:37:45.298595Z",
+          "updated_at": "2025-06-29T14:37:45.298595Z",
+          "user": {
+            "id_user": "00000000-0000-0000-0000-000000000000",
+            "id_role": "00000000-0000-0000-0000-000000000000",
+            "username": "",
+            "password": "",
+            "created_at": "0001-01-01T00:00:00Z",
+            "updated_at": "0001-01-01T00:00:00Z",
+            "role": {
+              "id_role": "00000000-0000-0000-0000-000000000000",
+              "role_name": "",
+              "created_at": "0001-01-01T00:00:00Z",
+              "updated_at": "0001-01-01T00:00:00Z",
+              "users": null
+            }
+          },
+          "KelasDiampu": null
+        }
+      ],
+      "KRS": null
+    }
+  ]
+}

@@ -3,15 +3,15 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/domain"
 	"github.com/redis/go-redis/v9"
 	"time"
 
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
 	"gorm.io/gorm"
 )
 
 type TahunAkademikRepository interface {
-	FindActive() (models.PeriodeAkademik, error)
+	FindActive() (domain.PeriodeAkademik, error)
 }
 
 type TahunAkademikRepositoryImpl struct {
@@ -28,15 +28,15 @@ func NewTahunAkademikRepository(db *gorm.DB, redisClient *redis.Client) TahunAka
 	}
 }
 
-func (r *TahunAkademikRepositoryImpl) FindActive() (models.PeriodeAkademik, error) {
+func (r *TahunAkademikRepositoryImpl) FindActive() (domain.PeriodeAkademik, error) {
 	cacheKey := "tahun_akademik:active"
-	emptyResult := models.PeriodeAkademik{}
+	emptyResult := domain.PeriodeAkademik{}
 
 	// 1. Coba ambil dari cache terlebih dahulu  caching
 	result, err := r.Redis.Get(r.Context, cacheKey).Result()
 	if err == nil {
 		// Cache HIT: Data ditemukan
-		var periodeAkademik models.PeriodeAkademik
+		var periodeAkademik domain.PeriodeAkademik
 		if json.Unmarshal([]byte(result), &periodeAkademik) == nil {
 			// Berhasil di-unmarshal, kembalikan data dari cache
 			return periodeAkademik, nil
@@ -44,13 +44,13 @@ func (r *TahunAkademikRepositoryImpl) FindActive() (models.PeriodeAkademik, erro
 	}
 
 	// 2. Cache MISS: Ambil dari database
-	var periodeAkademikFromDB models.PeriodeAkademik
+	var periodeAkademikFromDB domain.PeriodeAkademik
 	err = r.DB.Where("is_active = ?", true).First(&periodeAkademikFromDB).Error
 	if err != nil {
 		return emptyResult, err
 	}
 
-	// 3. Simpan hasil dari database ke cache untuk request berikutnya
+	// 3. Simpan hasil dari database ke cache untuk api berikutnya
 	jsonData, err := json.Marshal(periodeAkademikFromDB)
 	if err == nil {
 		// Set cache dengan waktu kedaluwarsa

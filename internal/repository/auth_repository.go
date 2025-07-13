@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/domain"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"time"
 )
 
 type AuthRepository interface {
-	FindByCredential(credential string) (*models.User, error)
+	FindByCredential(credential string) (*domain.User, error)
 }
 
 type AuthRepositoryImpl struct {
@@ -23,10 +23,10 @@ func NewAuthRepository(db *gorm.DB, logger *logrus.Logger) AuthRepository {
 	}
 }
 
-func (r *AuthRepositoryImpl) FindByCredential(credential string) (*models.User, error) {
+func (r *AuthRepositoryImpl) FindByCredential(credential string) (*domain.User, error) {
 	log := r.Logger.WithField("credential", credential)
 	log.Info("Mencari user berdasarkan kredential yang diberikan")
-	var user models.User
+	var user domain.User
 	startTime := time.Now()
 	err := r.Db.Preload("Role").Where("username = ?", credential).First(&user).Error
 	duration := time.Since(startTime)

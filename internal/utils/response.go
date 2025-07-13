@@ -146,7 +146,7 @@ func ParseJsonBody[T any](c *fiber.Ctx) (T, error) {
 	var result T
 
 	if err := c.BodyParser(&result); err != nil {
-		return result, fmt.Errorf("gagal mem-parsing body request: %w", err)
+		return result, fmt.Errorf("gagal mem-parsing body api: %w", err)
 	}
 
 	return result, nil

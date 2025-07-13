@@ -3,7 +3,7 @@ package middlewares
 import (
 	"encoding/json"
 	"errors"
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/domain"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/service"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/utils"
 	"github.com/gofiber/fiber/v2"
@@ -53,7 +53,7 @@ func (m *Middleware) AuthMiddleware() fiber.Handler {
 			return utils.Error(c, fiber.StatusUnauthorized, "Sesi tidak valid")
 		}
 
-		var sessionData models.Session
+		var sessionData domain.Session
 		if err := json.Unmarshal([]byte(dataFromRedis), &sessionData); err != nil {
 			log.Printf("Data sesi corrupt di Redis: %v", err)
 			return utils.Error(c, fiber.StatusInternalServerError, "Internal server error")

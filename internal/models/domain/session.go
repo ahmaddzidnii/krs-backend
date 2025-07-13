@@ -1,4 +1,4 @@
-package models
+package domain
 
 type RoleType struct {
 	IDRole   string `json:"id_role"`

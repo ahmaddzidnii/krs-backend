@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/domain"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -12,8 +12,8 @@ import (
 )
 
 type MahasiswaRepository interface {
-	FindByUserID(userID uuid.UUID) (*models.Mahasiswa, error)
-	FindByNIM(nim string) (*models.Mahasiswa, error)
+	FindByUserID(userID uuid.UUID) (*domain.Mahasiswa, error)
+	FindByNIM(nim string) (*domain.Mahasiswa, error)
 	FindByNIMWithTotalSKS(nim string) (*MahasiswaWithSKS, error)
 }
 
@@ -27,7 +27,7 @@ func NewMahasiswaRepository(db *gorm.DB, redisClient *redis.Client) MahasiswaRep
 	return &MahasiswaRepositoryImpl{Db: db, RedisClient: redisClient, Context: context.Background()}
 }
 
-func (r *MahasiswaRepositoryImpl) FindByUserID(userID uuid.UUID) (*models.Mahasiswa, error) {
+func (r *MahasiswaRepositoryImpl) FindByUserID(userID uuid.UUID) (*domain.Mahasiswa, error) {
 	cacheKey := "mahasiswa:userId:" + userID.String()
 	cacheTTL := 1 * time.Hour
 
@@ -35,13 +35,13 @@ func (r *MahasiswaRepositoryImpl) FindByUserID(userID uuid.UUID) (*models.Mahasi
 	cachedData, err := r.RedisClient.Get(r.Context, cacheKey).Result()
 	if err == nil {
 		// Cache HIT!
-		var mahasiswa models.Mahasiswa
+		var mahasiswa domain.Mahasiswa
 		if json.Unmarshal([]byte(cachedData), &mahasiswa) == nil {
 			return &mahasiswa, nil
 		}
 	}
 	// 2. Cache MISS! Ambil dari database.
-	var mahasiswa models.Mahasiswa
+	var mahasiswa domain.Mahasiswa
 	err = r.Db.Where("id_user = ?", userID).First(&mahasiswa).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -57,7 +57,7 @@ func (r *MahasiswaRepositoryImpl) FindByUserID(userID uuid.UUID) (*models.Mahasi
 	return &mahasiswa, nil
 }
 
-func (r *MahasiswaRepositoryImpl) FindByNIM(nim string) (*models.Mahasiswa, error) {
+func (r *MahasiswaRepositoryImpl) FindByNIM(nim string) (*domain.Mahasiswa, error) {
 	cacheKey := "mahasiswa:nim:" + nim
 	cacheTTL := 1 * time.Hour
 
@@ -65,14 +65,14 @@ func (r *MahasiswaRepositoryImpl) FindByNIM(nim string) (*models.Mahasiswa, erro
 	cachedData, err := r.RedisClient.Get(r.Context, cacheKey).Result()
 	if err == nil {
 		// Cache HIT!
-		var mahasiswa models.Mahasiswa
+		var mahasiswa domain.Mahasiswa
 		if json.Unmarshal([]byte(cachedData), &mahasiswa) == nil {
 			return &mahasiswa, nil
 		}
 	}
 
 	// 2. Cache MISS! Ambil dari database.
-	var mahasiswa models.Mahasiswa
+	var mahasiswa domain.Mahasiswa
 	err = r.Db.Where("nim = ?", nim).First(&mahasiswa).Error
 	if err != nil {
 		return nil, err // Termasuk jika record tidak ditemukan
@@ -88,7 +88,7 @@ func (r *MahasiswaRepositoryImpl) FindByNIM(nim string) (*models.Mahasiswa, erro
 }
 
 type MahasiswaWithSKS struct {
-	models.Mahasiswa
+	domain.Mahasiswa
 	TotalSKSDiambil int `json:"total_sks_diambil"`
 }
 
@@ -96,7 +96,7 @@ func (r *MahasiswaRepositoryImpl) FindByNIMWithTotalSKS(nim string) (*MahasiswaW
 	var result MahasiswaWithSKS
 
 	// Menggunakan COALESCE untuk memastikan SUM mengembalikan 0 jika hasilnya NULL
-	err := r.Db.Model(&models.Mahasiswa{}).
+	err := r.Db.Model(&domain.Mahasiswa{}).
 		Select("mahasiswa.*, COALESCE(SUM(mata_kuliah.sks), 0) as total_sks_diambil").
 		// Gunakan LEFT JOIN di sini
 		Joins("LEFT JOIN krs ON krs.id_mahasiswa = mahasiswa.id_mahasiswa").

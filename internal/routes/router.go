@@ -48,7 +48,10 @@ func RegisterRoutes(app *fiber.App, h *handlers.Handlers, mid *middlewares.Middl
 	authRoute.Post("/logout", mid.AuthMiddleware(), h.AuthHandler.Logout)
 	authRoute.Get("/session", mid.AuthMiddleware(), h.AuthHandler.GetSession)
 
-	mahasiswaRoute := api.Group("/mahasiswa")
-	mahasiswaRoute.Get("/syarat-pengisian-krs", mid.AuthMiddleware(), h.MahasiswaHandler.GetSyaratPengisisanKRS)
-	mahasiswaRoute.Get("/informasi-umum", mid.AuthMiddleware(), h.MahasiswaHandler.GetInformasiUmum)
+	mahasiswaRoute := api.Group("/mahasiswa", mid.AuthMiddleware())
+	mahasiswaRoute.Get("/syarat-pengisian-krs", h.MahasiswaHandler.GetSyaratPengisisanKRS)
+	mahasiswaRoute.Get("/informasi-umum", h.MahasiswaHandler.GetInformasiUmum)
+	mahasiswaRoute.Get("/penawaran-kelas", h.MahasiswaHandler.GetPenawaranKelas)
+	mahasiswaRoute.Post("/status-kouta-kelas", h.MahasiswaHandler.GetStatusKoutaKelas)
+	mahasiswaRoute.Post("/status-kouta-kelas-batch", h.MahasiswaHandler.GetStatusKoutaKelasBatch)
 }

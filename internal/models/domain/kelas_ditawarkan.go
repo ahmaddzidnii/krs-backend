@@ -1,4 +1,4 @@
-package models
+package domain
 
 import (
 	"github.com/google/uuid"
@@ -9,6 +9,7 @@ type KelasDitawarkan struct {
 	IDKelas   uuid.UUID `gorm:"primaryKey;column:id_kelas" json:"id_kelas"`
 	IDPeriode uuid.UUID `gorm:"column:id_periode;not null" json:"id_periode"`
 	IDMatkul  uuid.UUID `gorm:"column:id_matkul;not null" json:"id_matkul"`
+	NamaKelas string    `gorm:"column:nama_kelas;not null" json:"nama_kelas"`
 	Kouta     int       `gorm:"column:kouta;not null" json:"kouta"`
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime" json:"updated_at"`

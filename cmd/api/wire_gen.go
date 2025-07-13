@@ -46,7 +46,9 @@ func InitializeApp() (Application, error) {
 	tahunAkademikRepository := repository.NewTahunAkademikRepository(db, client)
 	tahunAkademikService := service.NewTahunAkademikService(tahunAkademikRepository, logger)
 	mahasiswaService := service.NewMahasiswaService(mahasiswaRepository, tahunAkademikService, logger)
-	mahasiswaHandler := handlers.NewMahasiswaHandler(mahasiswaService, logger, validate)
+	penjadwalanRepository := repository.NewPenjadwalanRepository(db, client, logger)
+	penjadwalanService := service.NewPenjadwalanService(penjadwalanRepository, mahasiswaRepository, mahasiswaService)
+	mahasiswaHandler := handlers.NewMahasiswaHandler(mahasiswaService, penjadwalanService, logger, validate)
 	handlersHandlers := handlers.NewHandlers(authHandler, mahasiswaHandler)
 	middleware := middlewares.NewMiddleware(client, db, tahunAkademikService)
 	app := ProvideRouter(handlersHandlers, middleware)
@@ -107,9 +109,9 @@ var InfrastructureSet = wire.NewSet(
 	ProvideRedis,
 )
 
-var RepositorySet = wire.NewSet(repository.NewAuthRepository, repository.NewSessionRepository, repository.NewMahasiswaRepository, repository.NewTahunAkademikRepository, repository.NewDosenRepository, repository.NewPegawaiRepository)
+var RepositorySet = wire.NewSet(repository.NewAuthRepository, repository.NewSessionRepository, repository.NewMahasiswaRepository, repository.NewTahunAkademikRepository, repository.NewDosenRepository, repository.NewPegawaiRepository, repository.NewPenjadwalanRepository)
 
-var ServiceSet = wire.NewSet(service.NewAuthService, service.NewMahasiswaService, service.NewTahunAkademikService)
+var ServiceSet = wire.NewSet(service.NewAuthService, service.NewMahasiswaService, service.NewTahunAkademikService, service.NewPenjadwalanService)
 
 var HandlerSet = wire.NewSet(handlers.NewAuthHandler, handlers.NewMahasiswaHandler, handlers.NewHandlers)
 

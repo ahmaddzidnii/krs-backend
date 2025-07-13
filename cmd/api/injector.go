@@ -86,12 +86,14 @@ var RepositorySet = wire.NewSet(
 	repository.NewTahunAkademikRepository,
 	repository.NewDosenRepository,
 	repository.NewPegawaiRepository,
+	repository.NewPenjadwalanRepository,
 )
 
 var ServiceSet = wire.NewSet(
 	service.NewAuthService,
 	service.NewMahasiswaService,
 	service.NewTahunAkademikService,
+	service.NewPenjadwalanService,
 )
 
 var HandlerSet = wire.NewSet(

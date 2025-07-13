@@ -3,18 +3,18 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/domain"
 	"github.com/sirupsen/logrus"
 	"time"
 
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
 	"github.com/redis/go-redis/v9"
 )
 
 // SessionRepository adalah interface untuk operasi data sesi di Redis
 type SessionRepository interface {
-	Create(ctx context.Context, sessionID string, payload *models.Session, ttl time.Duration) error
+	Create(ctx context.Context, sessionID string, payload *domain.Session, ttl time.Duration) error
 	Delete(ctx context.Context, sessionID string) error
-	Get(ctx context.Context, sessionID string) (*models.Session, error)
+	Get(ctx context.Context, sessionID string) (*domain.Session, error)
 }
 
 type SessionRepositoryImpl struct {
@@ -30,7 +30,7 @@ func NewSessionRepository(redis *redis.Client, logger *logrus.Logger) SessionRep
 	}
 }
 
-func (r *SessionRepositoryImpl) Create(ctx context.Context, sessionID string, payload *models.Session, ttl time.Duration) error {
+func (r *SessionRepositoryImpl) Create(ctx context.Context, sessionID string, payload *domain.Session, ttl time.Duration) error {
 	log := r.Logger.WithFields(logrus.Fields{
 		"sessionID": sessionID,
 		"userID":    payload.UserId,
@@ -67,7 +67,7 @@ func (r *SessionRepositoryImpl) Delete(ctx context.Context, sessionID string) er
 	return err
 }
 
-func (r *SessionRepositoryImpl) Get(ctx context.Context, sessionID string) (*models.Session, error) {
+func (r *SessionRepositoryImpl) Get(ctx context.Context, sessionID string) (*domain.Session, error) {
 	log := r.Logger.WithField("session_id", sessionID)
 	log.Info("Mengambil sesi dari Redis")
 
@@ -82,7 +82,7 @@ func (r *SessionRepositoryImpl) Get(ctx context.Context, sessionID string) (*mod
 		return nil, err // Error lain saat mengambil data
 	}
 
-	var session models.Session
+	var session domain.Session
 	if err := json.Unmarshal([]byte(data), &session); err != nil {
 		log.WithError(err).Error("Gagal mengubah data sesi dari JSON")
 		return nil, err // Error saat unmarshal

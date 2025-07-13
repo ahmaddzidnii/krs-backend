@@ -3,22 +3,18 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/api"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/domain"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/repository"
 	"github.com/google/uuid"
 )
 
-type LoginRequest struct {
-	Username string `validate:"required" json:"username"`
-	Password string `validate:"required" json:"password"`
-}
-
 type AuthService interface {
-	Login(ctx context.Context, req LoginRequest) (sessionID string, err error)
+	Login(ctx context.Context, req api.LoginRequest) (sessionID string, err error)
 	Logout(ctx context.Context, sessionID string) error
 }
 
@@ -56,7 +52,7 @@ var (
 	ErrInternalServer     = errors.New("terjadi kesalahan internal pada server")
 )
 
-func (s *AuthServiceImpl) Login(ctx context.Context, req LoginRequest) (string, error) {
+func (s *AuthServiceImpl) Login(ctx context.Context, req api.LoginRequest) (string, error) {
 
 	log := s.Logger.WithField("nim", req.Username)
 	log.Info("Memproses permintaan login")
@@ -130,11 +126,11 @@ func (s *AuthServiceImpl) Login(ctx context.Context, req LoginRequest) (string, 
 		log.Info("Role tidak memiliki profil spesifik yang perlu diambil.")
 	}
 
-	sessionPayload := &models.Session{
+	sessionPayload := &domain.Session{
 		UserId:     user.IDUser.String(),
 		NomorInduk: nomorInduk,
 		Nama:       nama,
-		Role: models.RoleType{
+		Role: domain.RoleType{
 			IDRole:   user.IDRole.String(),
 			RoleName: user.Role.RoleName,
 		},

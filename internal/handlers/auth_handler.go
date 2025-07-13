@@ -2,7 +2,8 @@ package handlers
 
 import (
 	"errors"
-	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/api"
+	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/models/domain"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/service"
 	"github.com/ahmaddzidnii/backend-krs-auth-service/internal/utils"
 	"github.com/go-playground/validator/v10"
@@ -28,7 +29,7 @@ func NewAuthHandler(authService service.AuthService, logger *logrus.Logger, vali
 }
 
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
-	var req service.LoginRequest
+	var req api.LoginRequest
 
 	if err := c.BodyParser(&req); err != nil {
 		h.Logger.WithError(err).Error("Gagal mem-parsing body requests login")
@@ -96,7 +97,7 @@ func (h *AuthHandler) Logout(c *fiber.Ctx) error {
 }
 
 func (h *AuthHandler) GetSession(c *fiber.Ctx) error {
-	sessionData, err := utils.GetLocals[models.Session](c, "session_data")
+	sessionData, err := utils.GetLocals[domain.Session](c, "session_data")
 	if err != nil {
 		log.Printf("Gagal mendapatkan session data: %v", err)
 		return utils.Error(c, fiber.StatusInternalServerError, "Internal server error")
